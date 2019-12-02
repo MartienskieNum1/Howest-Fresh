@@ -276,6 +276,7 @@ let cartElem = document.querySelector('.viewcart');
 let cartContainer = document.querySelector('#cart');
 let cartCLoseELem = document.querySelector('#cart .close');
 let cartCounterElem = document.querySelector('.viewcart span');
+let cartItems = document.querySelector('#cart .items');
 
 let init = () => {
     console.log('page loaded!');
@@ -365,6 +366,11 @@ let hidePopup = (e) => {
 
 let showCart = (e) => {
     cartContainer.classList.remove('hidden');
+
+    if (cartCounter === 0) {
+        cartItems.innerHTML = 'No meals have been added to your card yet'
+    }
+
     e.preventDefault();
 };
 
@@ -373,11 +379,40 @@ let hideCart = (e) => {
     e.preventDefault();
 };
 
+let alreadyInsertedTable = false;
+
 let addToCart = (e) => {
     cartCounter++;
     cartCounterElem.innerHTML = cartCounter;
 
+    if (alreadyInsertedTable === false) {
+        cartItems.innerHTML = `
+                    <table>
+                <thead>
+                    <tr>
+                        <th>Meal</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
 
+                </tbody>
+            </table>
+        `;
+        alreadyInsertedTable = true;
+    }
+
+    let cartItemsTableBody = document.querySelector('#cart .items tbody');
+    let mealId = e.currentTarget.parentElement.parentElement.getAttribute('data-id');
+    let mealTitle = meals[parseInt(mealId) - 1]['title'];
+    let mealPrice = meals[parseInt(mealId) - 1]['price'];
+
+    cartItemsTableBody.innerHTML += `
+    <tr>
+        <td>${mealTitle}</td>
+        <td>${mealPrice}</td>
+    </tr>
+    `;
 
     e.preventDefault();
 };
