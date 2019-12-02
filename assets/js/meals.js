@@ -1,3 +1,5 @@
+"use strict";
+
 const meals = [
     {
         id: 1,
@@ -266,7 +268,10 @@ const meals = [
 ];
 
 
-
+let init = () => {
+    console.log('page loaded!');
+};
+document.addEventListener('DOMContentLoaded', init);
 
 
 
