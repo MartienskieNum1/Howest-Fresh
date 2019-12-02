@@ -268,13 +268,22 @@ const meals = [
 ];
 
 
+let mealElem = document.querySelectorAll('article');
+let popupElem = document.querySelector('#popup');
+
 let init = () => {
     console.log('page loaded!');
+
+    mealElem.forEach(meal => {
+        meal.addEventListener('click', showPopup);
+    });
 };
 document.addEventListener('DOMContentLoaded', init);
 
 
-
+let showPopup = (e) => {
+    popupElem.classList.remove('hidden');
+};
 
 
 
