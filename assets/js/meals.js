@@ -271,6 +271,7 @@ const meals = [
 let mealElem = document.querySelectorAll('article');
 let popupElem = document.querySelector('#popup');
 let closeELem = document.querySelector('.close');
+let popupContent = document.querySelector('#popup .contentwrapper');
 
 let init = () => {
     console.log('page loaded!');
@@ -285,11 +286,40 @@ document.addEventListener('DOMContentLoaded', init);
 
 
 let showPopup = (e) => {
+    let id = e.currentTarget.getAttribute('data-id');
+
     popupElem.classList.remove('hidden');
+
+    popupContent.innerHTML = `
+    <article>
+        <h3>${meals[parseInt(id) - 1]['title']}</h3>
+        <figure>
+            <img src="images/${meals[parseInt(id) - 1]['img']}" />
+            <figcaption>
+                Meal by: <span>${meals[parseInt(id) - 1]['cook']}</span>
+            </figcaption>
+        </figure>
+        <div class="info">
+            <dl>
+                <dt>calories:</dt>
+                <dd>${meals[parseInt(id) - 1]['calories']}</dd>
+                <dt>servings:</dt>
+                <dd>${meals[parseInt(id) - 1]['servings']}</dd>
+                <dt>days to book in advance:</dt>
+                <dd>${meals[parseInt(id) - 1]['book']}</dd>
+                <dt>type:</dt>
+                <dd>${meals[parseInt(id) - 1]['type']}</dd>
+            </dl>
+            <p>€ ${meals[parseInt(id) - 1]['price']}/pp</p>
+            <a href="#" class="order">Order</a>
+        </div>
+    </article>
+    `;
 };
 
-let hidePopup = () => {
+let hidePopup = (e) => {
     popupElem.classList.add('hidden');
+    e.preventDefault();
 };
 
 
