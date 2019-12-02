@@ -270,6 +270,7 @@ const meals = [
 
 let mealElem = document.querySelectorAll('article');
 let popupElem = document.querySelector('#popup');
+let closeELem = document.querySelector('.close');
 
 let init = () => {
     console.log('page loaded!');
@@ -277,12 +278,18 @@ let init = () => {
     mealElem.forEach(meal => {
         meal.addEventListener('click', showPopup);
     });
+
+    closeELem.addEventListener('click', hidePopup);
 };
 document.addEventListener('DOMContentLoaded', init);
 
 
 let showPopup = (e) => {
     popupElem.classList.remove('hidden');
+};
+
+let hidePopup = () => {
+    popupElem.classList.add('hidden');
 };
 
 
