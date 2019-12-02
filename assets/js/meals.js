@@ -268,19 +268,40 @@ const meals = [
 ];
 
 
-let mealElem = document.querySelectorAll('article');
 let popupElem = document.querySelector('#popup');
 let closeELem = document.querySelector('.close');
 let popupContent = document.querySelector('#popup .contentwrapper');
+let mealContainer = document.querySelector('.flexcontainer');
 
 let init = () => {
     console.log('page loaded!');
+
+    meals.forEach(meal => {
+        mealContainer.innerHTML += `
+        <article data-id="${meal['id']}">
+            <h3>${meal['title']}</h3>
+            <figure>
+                <img src="images/${meal['img']}" alt="${meal['title']}" title="${meal['title']}">
+                <figcaption>
+                    Meal by: <span>${meal['cook']}</span>
+                </figcaption>
+            </figure>
+            <div class="info">
+                <p>€ <span>${meal['price']}</span>/pp</p>
+                <a href="#" class="order">Order</a>
+            </div>
+        </article>
+        `;
+    });
+
+    let mealElem = document.querySelectorAll('article');
 
     mealElem.forEach(meal => {
         meal.addEventListener('click', showPopup);
     });
 
     closeELem.addEventListener('click', hidePopup);
+
 };
 document.addEventListener('DOMContentLoaded', init);
 
@@ -294,7 +315,7 @@ let showPopup = (e) => {
     <article>
         <h3>${meals[parseInt(id) - 1]['title']}</h3>
         <figure>
-            <img src="images/${meals[parseInt(id) - 1]['img']}" />
+            <img src="images/${meals[parseInt(id) - 1]['img']}" alt="${meals[parseInt(id) - 1]['title']}" title="${meals[parseInt(id) - 1]['title']}" />
             <figcaption>
                 Meal by: <span>${meals[parseInt(id) - 1]['cook']}</span>
             </figcaption>
@@ -310,8 +331,10 @@ let showPopup = (e) => {
                 <dt>type:</dt>
                 <dd>${meals[parseInt(id) - 1]['type']}</dd>
             </dl>
-            <p>€ ${meals[parseInt(id) - 1]['price']}/pp</p>
-            <a href="#" class="order">Order</a>
+            <div class="info">
+                <p>€ ${meals[parseInt(id) - 1]['price']}/pp</p>
+                <a href="#" class="order">Order</a>
+            </div>
         </div>
     </article>
     `;
@@ -321,7 +344,6 @@ let hidePopup = (e) => {
     popupElem.classList.add('hidden');
     e.preventDefault();
 };
-
 
 
 
