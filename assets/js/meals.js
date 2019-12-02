@@ -275,6 +275,7 @@ let mealContainer = document.querySelector('.flexcontainer');
 let cartElem = document.querySelector('.viewcart');
 let cartContainer = document.querySelector('#cart');
 let cartCLoseELem = document.querySelector('#cart .close');
+let cartCounterElem = document.querySelector('.viewcart span');
 
 let init = () => {
     console.log('page loaded!');
@@ -297,7 +298,7 @@ let init = () => {
         `;
     });
 
-    let mealElem = document.querySelectorAll('article');
+    let mealElem = document.querySelectorAll('article img');
     mealElem.forEach(meal => {
         meal.addEventListener('click', showPopup);
     });
@@ -308,12 +309,18 @@ let init = () => {
 
     cartCLoseELem.addEventListener('click', hideCart);
 
+    let orderElem = document.querySelectorAll('.order');
+    orderElem.forEach(order => {
+        order.addEventListener('click', addToCart);
+    });
+
 };
 document.addEventListener('DOMContentLoaded', init);
 
+let cartCounter = 0;
 
 let showPopup = (e) => {
-    let id = e.currentTarget.getAttribute('data-id');
+    let id = e.currentTarget.parentElement.parentElement.getAttribute('data-id');
 
     popupElem.classList.remove('hidden');
 
@@ -344,6 +351,11 @@ let showPopup = (e) => {
         </div>
     </article>
     `;
+
+    let orderElem = document.querySelectorAll('.order');
+    orderElem.forEach(order => {
+        order.addEventListener('click', addToCart);
+    });
 };
 
 let hidePopup = (e) => {
@@ -361,7 +373,14 @@ let hideCart = (e) => {
     e.preventDefault();
 };
 
+let addToCart = (e) => {
+    cartCounter++;
+    cartCounterElem.innerHTML = cartCounter;
 
+
+
+    e.preventDefault();
+};
 
 
 
