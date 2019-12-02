@@ -277,6 +277,9 @@ let cartContainer = document.querySelector('#cart');
 let cartCLoseELem = document.querySelector('#cart .close');
 let cartCounterElem = document.querySelector('.viewcart span');
 let cartItems = document.querySelector('#cart .items');
+let cartCheckout = document.querySelector('#cartoverview a');
+let cartOverview = document.querySelector('#cartoverview');
+let personalInformation = document.querySelector('#personalinformation');
 
 let init = () => {
     console.log('page loaded!');
@@ -315,10 +318,10 @@ let init = () => {
         order.addEventListener('click', addToCart);
     });
 
+    cartCheckout.addEventListener('click', showCheckout);
+
 };
 document.addEventListener('DOMContentLoaded', init);
-
-let cartCounter = 0;
 
 let showPopup = (e) => {
     let id = e.currentTarget.parentElement.parentElement.getAttribute('data-id');
@@ -379,6 +382,7 @@ let hideCart = (e) => {
     e.preventDefault();
 };
 
+let cartCounter = 0;
 let alreadyInsertedTable = false;
 let totalPrice = 0;
 
@@ -431,11 +435,11 @@ let addToCart = (e) => {
     e.preventDefault();
 };
 
-
-
-
-
-
+let showCheckout = (e) => {
+    cartOverview.classList.add('hidden');
+    personalInformation.classList.remove('hidden');
+    e.preventDefault();
+};
 
 
 
