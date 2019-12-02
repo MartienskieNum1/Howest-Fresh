@@ -269,11 +269,12 @@ const meals = [
 
 
 let popupElem = document.querySelector('#popup');
-let closeELem = document.querySelector('.close');
+let popupCloseELem = document.querySelector('#popup .close');
 let popupContent = document.querySelector('#popup .contentwrapper');
 let mealContainer = document.querySelector('.flexcontainer');
-let viewCartElem = document.querySelector('.viewcart');
+let cartElem = document.querySelector('.viewcart');
 let cartContainer = document.querySelector('#cart');
+let cartCLoseELem = document.querySelector('#cart .close');
 
 let init = () => {
     console.log('page loaded!');
@@ -301,9 +302,11 @@ let init = () => {
         meal.addEventListener('click', showPopup);
     });
 
-    closeELem.addEventListener('click', hidePopup);
+    popupCloseELem.addEventListener('click', hidePopup);
 
-    viewCartElem.addEventListener('click', showCart);
+    cartElem.addEventListener('click', showCart);
+
+    cartCLoseELem.addEventListener('click', hideCart);
 
 };
 document.addEventListener('DOMContentLoaded', init);
@@ -353,7 +356,10 @@ let showCart = (e) => {
     e.preventDefault();
 };
 
-
+let hideCart = (e) => {
+    cartContainer.classList.add('hidden');
+    e.preventDefault();
+};
 
 
 
