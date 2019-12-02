@@ -334,7 +334,7 @@ let showPopup = (e) => {
                 Meal by: <span>${meals[parseInt(id) - 1]['cook']}</span>
             </figcaption>
         </figure>
-        <div class="info">
+        <div class="info" data-id="${meals[parseInt(id) - 1]['id']}">
             <dl>
                 <dt>calories:</dt>
                 <dd>${meals[parseInt(id) - 1]['calories']}</dd>
@@ -380,6 +380,7 @@ let hideCart = (e) => {
 };
 
 let alreadyInsertedTable = false;
+let totalPrice = 0;
 
 let addToCart = (e) => {
     cartCounter++;
@@ -397,20 +398,33 @@ let addToCart = (e) => {
                 <tbody>
 
                 </tbody>
+                <tfoot>
+                
+                </tfoot>
             </table>
         `;
         alreadyInsertedTable = true;
     }
 
     let cartItemsTableBody = document.querySelector('#cart .items tbody');
+    let cartItemsTableFoot = document.querySelector('#cart .items tfoot');
     let mealId = e.currentTarget.parentElement.parentElement.getAttribute('data-id');
     let mealTitle = meals[parseInt(mealId) - 1]['title'];
     let mealPrice = meals[parseInt(mealId) - 1]['price'];
+
+    totalPrice += parseInt(mealPrice);
 
     cartItemsTableBody.innerHTML += `
     <tr>
         <td>${mealTitle}</td>
         <td>${mealPrice}</td>
+    </tr>
+    `;
+
+    cartItemsTableFoot.innerHTML = `
+    <tr>
+        <td></td>
+        <td>Total: €${totalPrice}</td>
     </tr>
     `;
 
