@@ -272,6 +272,8 @@ let popupElem = document.querySelector('#popup');
 let closeELem = document.querySelector('.close');
 let popupContent = document.querySelector('#popup .contentwrapper');
 let mealContainer = document.querySelector('.flexcontainer');
+let viewCartElem = document.querySelector('.viewcart');
+let cartContainer = document.querySelector('#cart');
 
 let init = () => {
     console.log('page loaded!');
@@ -295,12 +297,13 @@ let init = () => {
     });
 
     let mealElem = document.querySelectorAll('article');
-
     mealElem.forEach(meal => {
         meal.addEventListener('click', showPopup);
     });
 
     closeELem.addEventListener('click', hidePopup);
+
+    viewCartElem.addEventListener('click', showCart);
 
 };
 document.addEventListener('DOMContentLoaded', init);
@@ -345,7 +348,10 @@ let hidePopup = (e) => {
     e.preventDefault();
 };
 
-
+let showCart = (e) => {
+    cartContainer.classList.remove('hidden');
+    e.preventDefault();
+};
 
 
 
