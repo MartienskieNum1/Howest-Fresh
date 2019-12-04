@@ -280,6 +280,12 @@ let cartItems = document.querySelector('#cart .items');
 let cartCheckout = document.querySelector('#cartoverview a');
 let cartOverview = document.querySelector('#cartoverview');
 let personalInformation = document.querySelector('#personalinformation');
+let submitPersonalInformation = document.querySelector('#personalinformation input[type="submit"]');
+let confirmation = document.querySelector('#confirmation');
+let confirmationPersonsName = document.querySelector('#confirmation .personname');
+let confirmationPrice = document.querySelector('#confirmation .price');
+let confirmationRadios = document.querySelectorAll('#personalinformation input[type="radio"]');
+let confirmationPaymentMethod = document.querySelector('#confirmation .paymentmethod');
 
 let init = () => {
     console.log('page loaded!');
@@ -313,12 +319,14 @@ let init = () => {
 
     cartCLoseELem.addEventListener('click', hideCart);
 
-    let orderElem = document.querySelectorAll('.order');
+    let orderElem = document.querySelectorAll('.info .order');
     orderElem.forEach(order => {
         order.addEventListener('click', addToCart);
     });
 
     cartCheckout.addEventListener('click', showCheckout);
+
+    submitPersonalInformation.addEventListener('click', confirmOrder);
 
 };
 document.addEventListener('DOMContentLoaded', init);
@@ -384,6 +392,7 @@ let hideCart = (e) => {
 
 let cartCounter = 0;
 let alreadyInsertedTable = false;
+
 let totalPrice = 0;
 
 let addToCart = (e) => {
@@ -441,7 +450,23 @@ let showCheckout = (e) => {
     e.preventDefault();
 };
 
+let confirmOrder = (e) => {
+    let name = document.querySelector('#ordername').value;
 
+    personalInformation.classList.add('hidden');
+    confirmation.classList.remove('hidden');
+
+    confirmationRadios.forEach(radio => {
+        if (radio.checked) {
+            confirmationPaymentMethod.innerHTML = radio.value;
+        }
+    });
+
+    confirmationPersonsName.innerHTML = name;
+    confirmationPrice.innerHTML = `€${totalPrice}`;
+
+    e.preventDefault();
+};
 
 
 
