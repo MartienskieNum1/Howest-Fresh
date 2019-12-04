@@ -286,6 +286,7 @@ let confirmationPersonsName = document.querySelector('#confirmation .personname'
 let confirmationPrice = document.querySelector('#confirmation .price');
 let confirmationRadios = document.querySelectorAll('#personalinformation input[type="radio"]');
 let confirmationPaymentMethod = document.querySelector('#confirmation .paymentmethod');
+let mealCounterElem = document.querySelector('aside span');
 
 let init = () => {
     console.log('page loaded!');
@@ -307,6 +308,8 @@ let init = () => {
         </article>
         `;
     });
+
+    mealCounterElem.innerHTML = meals.length;
 
     let mealElem = document.querySelectorAll('article img');
     mealElem.forEach(meal => {
