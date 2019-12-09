@@ -393,14 +393,20 @@ let hideCart = (e) => {
     e.preventDefault();
 };
 
-let cartCounter = 0;
+let cartCounter = localStorage.getItem('cartCounter');
+if (cartCounter === null) {
+    cartCounter = 0
+}
+cartCounterElem.innerHTML = localStorage.getItem('cartCounter');
+
 let alreadyInsertedTable = false;
 
 let totalPrice = 0;
 
 let addToCart = (e) => {
     cartCounter++;
-    cartCounterElem.innerHTML = cartCounter;
+    localStorage.setItem('cartCounter', cartCounter);
+    cartCounterElem.innerHTML = localStorage.getItem('cartCounter');
 
     if (alreadyInsertedTable === false) {
         cartItems.innerHTML = `
@@ -461,7 +467,7 @@ let confirmOrder = (e) => {
 
     confirmationRadios.forEach(radio => {
         if (radio.checked) {
-            confirmationPaymentMethod.innerHTML = radio.value;
+            confirmationPaymentMethod.innerHTML = radio.value.replace('_', ' ');
         }
     });
 
