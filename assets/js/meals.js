@@ -374,23 +374,23 @@ let showPopup = (e) => {
 };
 
 let hidePopup = (e) => {
-    popupElem.classList.add('hidden');
     e.preventDefault();
+    popupElem.classList.add('hidden');
 };
 
 let showCart = (e) => {
+    e.preventDefault();
+
     cartContainer.classList.remove('hidden');
 
     if (cartCounter === 0) {
         cartItems.innerHTML = 'No meals have been added to your card yet'
     }
-
-    e.preventDefault();
 };
 
 let hideCart = (e) => {
-    cartContainer.classList.add('hidden');
     e.preventDefault();
+    cartContainer.classList.add('hidden');
 };
 
 let cartCounter = localStorage.getItem('cartCounter');
@@ -412,6 +412,8 @@ if (totalPrice === null) {
 }
 
 let addToCart = (e) => {
+    e.preventDefault();
+
     cartCounter++;
     localStorage.setItem('cartCounter', cartCounter);
     cartCounterElem.innerHTML = localStorage.getItem('cartCounter');
@@ -461,17 +463,16 @@ let addToCart = (e) => {
     `;
 
     localStorage.setItem('mealsInCart', cartItems.innerHTML);
-
-    e.preventDefault();
 };
 
 let showCheckout = (e) => {
+    e.preventDefault();
     cartOverview.classList.add('hidden');
     personalInformation.classList.remove('hidden');
-    e.preventDefault();
 };
 
 let confirmOrder = (e) => {
+    e.preventDefault();
     let name = document.querySelector('#ordername').value;
 
     personalInformation.classList.add('hidden');
@@ -485,8 +486,6 @@ let confirmOrder = (e) => {
 
     confirmationPersonsName.innerHTML = name;
     confirmationPrice.innerHTML = `€${totalPrice}`;
-
-    e.preventDefault();
 };
 
 
