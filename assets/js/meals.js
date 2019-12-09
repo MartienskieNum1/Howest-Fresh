@@ -276,7 +276,7 @@ let cartElem = document.querySelector('.viewcart');
 let cartContainer = document.querySelector('#cart');
 let cartCLoseELem = document.querySelector('#cart .close');
 let cartCounterElem = document.querySelector('.viewcart span');
-let cartItems = document.querySelector('#cart .items');
+let cartItems = document.querySelector('#cartoverview .items');
 let cartCheckout = document.querySelector('#cartoverview a');
 let cartOverview = document.querySelector('#cartoverview');
 let personalInformation = document.querySelector('#personalinformation');
@@ -401,6 +401,11 @@ cartCounterElem.innerHTML = localStorage.getItem('cartCounter');
 
 let alreadyInsertedTable = false;
 
+if (localStorage.key(2)) {
+    cartItems.innerHTML = localStorage.getItem('mealsInCart');
+    alreadyInsertedTable = true
+}
+
 let totalPrice = localStorage.getItem('totalPrice');
 if (totalPrice === null) {
     totalPrice = 0
@@ -454,6 +459,8 @@ let addToCart = (e) => {
         <td>Total: €${totalPrice}</td>
     </tr>
     `;
+
+    localStorage.setItem('mealsInCart', cartItems.innerHTML);
 
     e.preventDefault();
 };
