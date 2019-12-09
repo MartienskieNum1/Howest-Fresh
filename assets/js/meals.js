@@ -401,7 +401,10 @@ cartCounterElem.innerHTML = localStorage.getItem('cartCounter');
 
 let alreadyInsertedTable = false;
 
-let totalPrice = 0;
+let totalPrice = localStorage.getItem('totalPrice');
+if (totalPrice === null) {
+    totalPrice = 0
+}
 
 let addToCart = (e) => {
     cartCounter++;
@@ -434,7 +437,9 @@ let addToCart = (e) => {
     let mealTitle = meals[parseInt(mealId) - 1]['title'];
     let mealPrice = meals[parseInt(mealId) - 1]['price'];
 
+    totalPrice = parseInt(totalPrice);
     totalPrice += parseInt(mealPrice);
+    localStorage.setItem('totalPrice', totalPrice);
 
     cartItemsTableBody.innerHTML += `
     <tr>
