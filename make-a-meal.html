@@ -29,7 +29,33 @@
         <h2>
            Make a meal
         </h2>
+        <form action="#" method="post">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title"/>
 
+            <label for="book">Days to book in advance</label>
+            <input type="number" name="book" id="book" min="0" max="5"/>
+
+            <label for="calories">Calories</label>
+            <input type="number" name="calories" id="calories" value="200"/>
+
+            <label for="servings">Servings</label>
+            <input type="number" name="servings" id="servings" min="1" max="5"/>
+
+            <label for="price">Price (in €)</label>
+            <input type="number" name="price" id="price" min="5"/>
+
+            <label>Type</label>
+            <input type="radio" name="type" id="lunch" value="lunch"/><label for="lunch">Lunch</label><input type="radio" name="type" id="dinner" value="dinner"/><label for="dinner">Dinner</label>
+
+            <label for="cook">Cook</label>
+            <input type="text" name="cook" id="cook"/>
+
+            <label for="available">Amount available</label>
+            <input type="number" name="available" id="available" value="10"/>
+
+            <input class="order" type="submit" value="Confirm"/>
+        </form>
     </section>
 
 
