@@ -289,12 +289,17 @@ let confirmationPaymentMethod = document.querySelector('#confirmation .paymentme
 let mealCounterElem = document.querySelector('aside span');
 let mealOfTheDay = document.querySelector('#mealoftheday');
 
+if (!localStorage.key(0)) {
+    localStorage.setItem('meals', JSON.stringify(meals))
+}
+let localStorageMeals = JSON.parse(localStorage.getItem('meals'));
+
 let init = () => {
     console.log('page loaded!');
 
     randomMealPicker();
 
-    meals.forEach(meal => {
+    localStorageMeals.forEach(meal => {
         mealContainer.innerHTML += `
         <article data-id="${meal['id']}">
             <h3>${meal['title']}</h3>
@@ -312,7 +317,7 @@ let init = () => {
         `;
     });
 
-    mealCounterElem.innerHTML = meals.length;
+    mealCounterElem.innerHTML = localStorageMeals.length;
 
     let mealElem = document.querySelectorAll('article img');
     mealElem.forEach(meal => {
@@ -338,15 +343,15 @@ let init = () => {
 document.addEventListener('DOMContentLoaded', init);
 
 let randomMealPicker = () => {
-    let randMeal = Math.floor(Math.random() * meals.length);
+    let randMeal = Math.floor(Math.random() * localStorageMeals.length);
     mealOfTheDay.innerHTML = `
     <h2>
         Meal of the day
     </h2>
-    <img src="images/${meals[randMeal]["img"]}" alt="${meals[randMeal]["title"]}" title="${meals[randMeal]["title"]}">
+    <img src="images/${localStorageMeals[randMeal]["img"]}" alt="${localStorageMeals[randMeal]["title"]}" title="${localStorageMeals[randMeal]["title"]}">
     <div>
         <p><span>Each day we select a different meal for you to enjoy. This should keep you fresh and motivated to let go of those fatty ready meals and enjoy life!</span></p>
-        <p><span>Today's special pick is</span><strong>${meals[randMeal]["title"]}</strong></p>
+        <p><span>Today's special pick is</span><strong>${localStorageMeals[randMeal]["title"]}</strong></p>
     </div>
 
     `;
@@ -359,26 +364,26 @@ let showPopup = (e) => {
 
     popupContent.innerHTML = `
     <article>
-        <h3>${meals[parseInt(id) - 1]['title']}</h3>
+        <h3>${localStorageMeals[parseInt(id) - 1]['title']}</h3>
         <figure>
-            <img src="images/${meals[parseInt(id) - 1]['img']}" alt="${meals[parseInt(id) - 1]['title']}" title="${meals[parseInt(id) - 1]['title']}" />
+            <img src="images/${localStorageMeals[parseInt(id) - 1]['img']}" alt="${localStorageMeals[parseInt(id) - 1]['title']}" title="${localStorageMeals[parseInt(id) - 1]['title']}" />
             <figcaption>
-                Meal by: <span>${meals[parseInt(id) - 1]['cook']}</span>
+                Meal by: <span>${localStorageMeals[parseInt(id) - 1]['cook']}</span>
             </figcaption>
         </figure>
-        <div class="info" data-id="${meals[parseInt(id) - 1]['id']}">
+        <div class="info" data-id="${localStorageMeals[parseInt(id) - 1]['id']}">
             <dl>
                 <dt>calories:</dt>
-                <dd>${meals[parseInt(id) - 1]['calories']}</dd>
+                <dd>${localStorageMeals[parseInt(id) - 1]['calories']}</dd>
                 <dt>servings:</dt>
-                <dd>${meals[parseInt(id) - 1]['servings']}</dd>
+                <dd>${localStorageMeals[parseInt(id) - 1]['servings']}</dd>
                 <dt>days to book in advance:</dt>
-                <dd>${meals[parseInt(id) - 1]['book']}</dd>
+                <dd>${localStorageMeals[parseInt(id) - 1]['book']}</dd>
                 <dt>type:</dt>
-                <dd>${meals[parseInt(id) - 1]['type']}</dd>
+                <dd>${localStorageMeals[parseInt(id) - 1]['type']}</dd>
             </dl>
             <div class="info">
-                <p>€ ${meals[parseInt(id) - 1]['price']}/pp</p>
+                <p>€ ${localStorageMeals[parseInt(id) - 1]['price']}/pp</p>
                 <a href="#" class="order">Order</a>
             </div>
         </div>
@@ -459,8 +464,8 @@ let addToCart = (e) => {
     let cartItemsTableBody = document.querySelector('#cart .items tbody');
     let cartItemsTableFoot = document.querySelector('#cart .items tfoot');
     let mealId = e.currentTarget.parentElement.parentElement.getAttribute('data-id');
-    let mealTitle = meals[parseInt(mealId) - 1]['title'];
-    let mealPrice = meals[parseInt(mealId) - 1]['price'];
+    let mealTitle = localStorageMeals[parseInt(mealId) - 1]['title'];
+    let mealPrice = localStorageMeals[parseInt(mealId) - 1]['price'];
 
     totalPrice = parseInt(totalPrice);
     totalPrice += parseInt(mealPrice);
