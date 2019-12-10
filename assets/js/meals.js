@@ -287,9 +287,12 @@ let confirmationPrice = document.querySelector('#confirmation .price');
 let confirmationRadios = document.querySelectorAll('#personalinformation input[type="radio"]');
 let confirmationPaymentMethod = document.querySelector('#confirmation .paymentmethod');
 let mealCounterElem = document.querySelector('aside span');
+let mealOfTheDay = document.querySelector('#mealoftheday');
 
 let init = () => {
     console.log('page loaded!');
+
+    randomMealPicker();
 
     meals.forEach(meal => {
         mealContainer.innerHTML += `
@@ -333,6 +336,21 @@ let init = () => {
 
 };
 document.addEventListener('DOMContentLoaded', init);
+
+let randomMealPicker = () => {
+    let randMeal = Math.floor(Math.random() * meals.length);
+    mealOfTheDay.innerHTML = `
+    <h2>
+        Meal of the day
+    </h2>
+    <img src="images/${meals[randMeal]["img"]}" alt="${meals[randMeal]["title"]}" title="${meals[randMeal]["title"]}">
+    <div>
+        <p><span>Each day we select a different meal for you to enjoy. This should keep you fresh and motivated to let go of those fatty ready meals and enjoy life!</span></p>
+        <p><span>Today's special pick is</span><strong>${meals[randMeal]["title"]}</strong></p>
+    </div>
+
+    `;
+};
 
 let showPopup = (e) => {
     let id = e.currentTarget.parentElement.parentElement.getAttribute('data-id');
