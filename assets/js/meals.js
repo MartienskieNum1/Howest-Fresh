@@ -513,7 +513,15 @@ let confirmOrder = (e) => {
 
     confirmationRadios.forEach(radio => {
         if (radio.checked) {
-            confirmationPaymentMethod.innerHTML = radio.value.replace('_', ' ');
+            if (radio.value === 'card') {
+                confirmationPaymentMethod.innerHTML = `by card`;
+            } else if (radio.value === 'bitcoin') {
+                confirmationPaymentMethod.innerHTML = `with bitcoin`;
+            } else if (radio.value === 'gold_bars') {
+                confirmationPaymentMethod.innerHTML = `in gold bars`;
+            } else if (radio.value === 'in_kind') {
+                confirmationPaymentMethod.innerHTML = `in kind`;
+            }
         }
     });
 
