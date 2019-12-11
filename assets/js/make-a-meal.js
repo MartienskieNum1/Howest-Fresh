@@ -15,6 +15,19 @@ let confirmationPrice = document.querySelector('#confirmation .price');
 let confirmationRadios = document.querySelectorAll('#personalinformation input[type="radio"]');
 let confirmationPaymentMethod = document.querySelector('#confirmation .paymentmethod');
 
+let localStorageMeals = JSON.parse(localStorage.getItem('meals'));
+let amountMeals = localStorageMeals.length;
+let submitElem = document.querySelector('input[type="submit"]');
+let titleElem = document.querySelector('input[name="title"]');
+let bookELem = document.querySelector('input[name="book"]');
+let caloriesELem = document.querySelector('input[name="calories"]');
+let servingsELem = document.querySelector('input[name="servings"]');
+let priceELem = document.querySelector('input[name="price"]');
+let typeElement = document.querySelectorAll('input[name="type"]');
+let cookELem = document.querySelector('input[name="cook"]');
+let availableELem = document.querySelector('input[name="available"]');
+
+
 let init = () => {
     console.log('page loaded!');
 
@@ -31,6 +44,7 @@ let init = () => {
 
     submitPersonalInformation.addEventListener('click', confirmOrder);
 
+    submitElem.addEventListener('click', addMeal);
 };
 document.addEventListener('DOMContentLoaded', init);
 
@@ -67,60 +81,6 @@ if (totalPrice === null) {
     totalPrice = 0
 }
 
-let addToCart = (e) => {
-    e.preventDefault();
-
-    cartCounter++;
-    localStorage.setItem('cartCounter', cartCounter);
-    cartCounterElem.innerHTML = localStorage.getItem('cartCounter');
-
-    if (alreadyInsertedTable === false) {
-        cartItems.innerHTML = `
-                    <table>
-                <thead>
-                    <tr>
-                        <th>Meal</th>
-                        <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                </tbody>
-                <tfoot>
-                
-                </tfoot>
-            </table>
-        `;
-        alreadyInsertedTable = true;
-    }
-
-    let cartItemsTableBody = document.querySelector('#cart .items tbody');
-    let cartItemsTableFoot = document.querySelector('#cart .items tfoot');
-    let mealId = e.currentTarget.parentElement.parentElement.getAttribute('data-id');
-    let mealTitle = meals[parseInt(mealId) - 1]['title'];
-    let mealPrice = meals[parseInt(mealId) - 1]['price'];
-
-    totalPrice = parseInt(totalPrice);
-    totalPrice += parseInt(mealPrice);
-    localStorage.setItem('totalPrice', totalPrice);
-
-    cartItemsTableBody.innerHTML += `
-    <tr>
-        <td>${mealTitle}</td>
-        <td>${mealPrice}</td>
-    </tr>
-    `;
-
-    cartItemsTableFoot.innerHTML = `
-    <tr>
-        <td></td>
-        <td>Total: €${totalPrice}</td>
-    </tr>
-    `;
-
-    localStorage.setItem('mealsInCart', cartItems.innerHTML);
-};
-
 let showCheckout = (e) => {
     e.preventDefault();
     cartOverview.classList.add('hidden');
@@ -142,4 +102,28 @@ let confirmOrder = (e) => {
 
     confirmationPersonsName.innerHTML = name;
     confirmationPrice.innerHTML = `€${totalPrice}`;
+};
+
+let addMeal = (e) => {
+    e.preventDefault();
+    let checkedRadio;
+
+    typeElement.forEach(radio => {
+        if (radio.checked) {
+            checkedRadio = radio
+        }
+    });
+
+    localStorageMeals.push(
+        {id: amountMeals + 1,
+        title: titleElem.value,
+        book: bookELem.value,
+        calories: caloriesELem.value,
+        servings: servingsELem.value,
+        type: checkedRadio.value,
+        price: priceELem.value,
+        cook: cookELem.value,
+        quantity: amountMeals.value});
+
+    localStorage.setItem('meals', JSON.stringify(localStorageMeals));
 };
