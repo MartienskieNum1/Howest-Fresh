@@ -414,6 +414,16 @@ let showCart = (e) => {
 let hideCart = (e) => {
     e.preventDefault();
     cartContainer.classList.add('hidden');
+
+    cartOverview.classList.remove('hidden');
+
+    if (personalInformation.className !== 'hidden') {
+        personalInformation.classList.add('hidden')
+    }
+
+    if (confirmation.className !== 'hidden') {
+        confirmation.classList.add('hidden')
+    }
 };
 
 let cartCounter = localStorage.getItem('cartCounter');
