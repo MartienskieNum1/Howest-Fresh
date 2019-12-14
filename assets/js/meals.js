@@ -311,23 +311,7 @@ let init = () => {
 
     randomMealPicker();
 
-    localStorageMeals.forEach(meal => {
-        mealContainer.innerHTML += `
-        <article data-id="${meal['id']}">
-            <h3>${meal['title']}</h3>
-            <figure>
-                <img src="images/${meal['img']}" alt="${meal['title']}" title="${meal['title']}">
-                <figcaption>
-                    Meal by: <span>${meal['cook']}</span>
-                </figcaption>
-            </figure>
-            <div class="info">
-                <p>€ <span>${meal['price']}</span>/pp</p>
-                <a href="#" class="order">Order</a>
-            </div>
-        </article>
-        `;
-    });
+    loadMeals();
 
     mealCounterElem.innerHTML = localStorageMeals.length;
 
@@ -367,6 +351,26 @@ let randomMealPicker = () => {
     </div>
 
     `;
+};
+
+let loadMeals = () => {
+    localStorageMeals.forEach(meal => {
+        mealContainer.innerHTML += `
+        <article data-id="${meal['id']}">
+            <h3>${meal['title']}</h3>
+            <figure>
+                <img src="images/${meal['img']}" alt="${meal['title']}" title="${meal['title']}">
+                <figcaption>
+                    Meal by: <span>${meal['cook']}</span>
+                </figcaption>
+            </figure>
+            <div class="info">
+                <p>€ <span>${meal['price']}</span>/pp</p>
+                <a href="#" class="order">Order</a>
+            </div>
+        </article>
+        `;
+    })
 };
 
 let showPopup = (e) => {
@@ -427,6 +431,8 @@ let hidePopup = (e) => {
 };
 
 let showChangeForm = (e) => {
+    e.preventDefault();
+
     popupContent.classList.add('hidden');
     changeForm.classList.remove('hidden');
     let mealId = e.target.closest('article').getAttribute('data-id');
@@ -440,7 +446,34 @@ let showChangeForm = (e) => {
     cookELem.value = localStorageMeals[parseInt(mealId) - 1]['cook'];
     availableELem.value = localStorageMeals[parseInt(mealId) - 1]['quantity'];
 
-    e.preventDefault();
+    localStorage.setItem('meals', JSON.stringify(localStorageMeals));
+
+    submitElem.addEventListener('click', () => {
+        let checkedRadio;
+
+        typeElement.forEach(radio => {
+            if (radio.checked) {
+                checkedRadio = radio
+            }
+        });
+
+        localStorageMeals[parseInt(mealId) - 1] =
+            {id: parseInt(mealId),
+            title: titleElem.value,
+            img: 'dummy.jpg',
+            book: bookELem.value,
+            calories: caloriesELem.value,
+            servings: servingsELem.value,
+            type: checkedRadio.value,
+            price: priceELem.value,
+            cook: cookELem.value,
+            quantity: availableELem.value};
+
+        localStorage.setItem('meals', JSON.stringify(localStorageMeals));
+
+        location.reload();
+
+    });
 };
 
 let showCart = (e) => {
