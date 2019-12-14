@@ -448,7 +448,9 @@ let showChangeForm = (e) => {
 
     localStorage.setItem('meals', JSON.stringify(localStorageMeals));
 
-    submitElem.addEventListener('click', () => {
+    submitElem.addEventListener('click', (e) => {
+        e.preventDefault();
+
         let checkedRadio;
 
         typeElement.forEach(radio => {
@@ -522,12 +524,18 @@ if (totalPrice === null) {
 let addToCart = (e) => {
     e.preventDefault();
 
-    cartCounter++;
-    localStorage.setItem('cartCounter', cartCounter);
-    cartCounterElem.innerHTML = localStorage.getItem('cartCounter');
+    let mealId = e.currentTarget.closest('article').getAttribute('data-id');
+    let mealTitle = localStorageMeals[parseInt(mealId) - 1]['title'];
+    let mealPrice = localStorageMeals[parseInt(mealId) - 1]['price'];
+    let mealQuantity = localStorageMeals[parseInt(mealId) - 1]['quantity'];
 
-    if (alreadyInsertedTable === false) {
-        cartItems.innerHTML = `
+    if (mealQuantity >= 1) {
+        cartCounter++;
+        localStorage.setItem('cartCounter', cartCounter);
+        cartCounterElem.innerHTML = localStorage.getItem('cartCounter');
+
+        if (alreadyInsertedTable === false) {
+            cartItems.innerHTML = `
                     <table>
                 <thead>
                     <tr>
@@ -543,34 +551,33 @@ let addToCart = (e) => {
                 </tfoot>
             </table>
         `;
-        alreadyInsertedTable = true;
+            alreadyInsertedTable = true;
+        }
+
+        let cartItemsTableBody = document.querySelector('#cart .items tbody');
+        let cartItemsTableFoot = document.querySelector('#cart .items tfoot');
+
+        totalPrice = parseInt(totalPrice);
+        totalPrice += parseInt(mealPrice);
+        localStorage.setItem('totalPrice', totalPrice);
+
+        cartItemsTableBody.innerHTML += `
+        <tr>
+            <td>${mealTitle}</td>
+            <td>${mealPrice}</td>
+        </tr>
+        `;
+
+        cartItemsTableFoot.innerHTML = `
+        <tr>
+            <td></td>
+            <td>Total: €${totalPrice}</td>
+        </tr>
+        `;
+
+        localStorage.setItem('mealsInCart', cartItems.innerHTML);
+
     }
-
-    let cartItemsTableBody = document.querySelector('#cart .items tbody');
-    let cartItemsTableFoot = document.querySelector('#cart .items tfoot');
-    let mealId = e.currentTarget.closest('article').getAttribute('data-id');
-    let mealTitle = localStorageMeals[parseInt(mealId) - 1]['title'];
-    let mealPrice = localStorageMeals[parseInt(mealId) - 1]['price'];
-
-    totalPrice = parseInt(totalPrice);
-    totalPrice += parseInt(mealPrice);
-    localStorage.setItem('totalPrice', totalPrice);
-
-    cartItemsTableBody.innerHTML += `
-    <tr>
-        <td>${mealTitle}</td>
-        <td>${mealPrice}</td>
-    </tr>
-    `;
-
-    cartItemsTableFoot.innerHTML = `
-    <tr>
-        <td></td>
-        <td>Total: €${totalPrice}</td>
-    </tr>
-    `;
-
-    localStorage.setItem('mealsInCart', cartItems.innerHTML);
 };
 
 let showCheckout = (e) => {
