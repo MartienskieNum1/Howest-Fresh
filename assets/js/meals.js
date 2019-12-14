@@ -290,6 +290,17 @@ let mealCounterElem = document.querySelector('aside span');
 let mealOfTheDay = document.querySelector('#mealoftheday');
 let changeForm = document.querySelector('#popup .changeform');
 
+let submitElem = document.querySelector('.changeform input[type="submit"]');
+let titleElem = document.querySelector('.changeform input[name="title"]');
+let bookELem = document.querySelector('.changeform input[name="book"]');
+let caloriesELem = document.querySelector('.changeform input[name="calories"]');
+let servingsELem = document.querySelector('.changeform input[name="servings"]');
+let priceELem = document.querySelector('.changeform input[name="price"]');
+let typeElement = document.querySelectorAll('.changeform input[name="type"]');
+let cookELem = document.querySelector('.changeform input[name="cook"]');
+let availableELem = document.querySelector('.changeform input[name="available"]');
+
+
 if (!localStorage.key(0)) {
     localStorage.setItem('meals', JSON.stringify(meals))
 }
@@ -382,6 +393,8 @@ let showPopup = (e) => {
                 <dd>${localStorageMeals[parseInt(id) - 1]['book']}</dd>
                 <dt>type:</dt>
                 <dd>${localStorageMeals[parseInt(id) - 1]['type']}</dd>
+                <dt>Amount available:</dt>
+                <dd>${localStorageMeals[parseInt(id) - 1]['quantity']}</dd>
             </dl>
             <div class="info">
                 <p>€ ${localStorageMeals[parseInt(id) - 1]['price']}/pp</p>
@@ -415,8 +428,17 @@ let hidePopup = (e) => {
 
 let showChangeForm = (e) => {
     popupContent.classList.add('hidden');
-
     changeForm.classList.remove('hidden');
+    let mealId = e.target.closest('article').getAttribute('data-id');
+
+    titleElem.value = localStorageMeals[parseInt(mealId) - 1]['title'];
+    bookELem.value = localStorageMeals[parseInt(mealId) - 1]['book'];
+    caloriesELem.value = localStorageMeals[parseInt(mealId) - 1]['calories'];
+    servingsELem.value = localStorageMeals[parseInt(mealId) - 1]['servings'];
+    priceELem.value = localStorageMeals[parseInt(mealId) - 1]['price'];
+    document.querySelector(`input[value="${localStorageMeals[parseInt(mealId) - 1]['type']}"]`).checked = true;
+    cookELem.value = localStorageMeals[parseInt(mealId) - 1]['cook'];
+    availableELem.value = localStorageMeals[parseInt(mealId) - 1]['quantity'];
 
     e.preventDefault();
 };

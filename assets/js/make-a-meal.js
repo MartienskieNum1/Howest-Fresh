@@ -124,7 +124,7 @@ let addMeal = (e) => {
         type: checkedRadio.value,
         price: priceELem.value,
         cook: cookELem.value,
-        quantity: amountMeals.value});
+        quantity: availableELem.value});
 
     localStorage.setItem('meals', JSON.stringify(localStorageMeals));
 };
