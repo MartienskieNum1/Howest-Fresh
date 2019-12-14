@@ -117,6 +117,7 @@ let addMeal = (e) => {
     localStorageMeals.push(
         {id: amountMeals + 1,
         title: titleElem.value,
+        img: 'dummy.jpg',
         book: bookELem.value,
         calories: caloriesELem.value,
         servings: servingsELem.value,

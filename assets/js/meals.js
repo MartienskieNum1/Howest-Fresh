@@ -288,6 +288,7 @@ let confirmationRadios = document.querySelectorAll('#personalinformation input[t
 let confirmationPaymentMethod = document.querySelector('#confirmation .paymentmethod');
 let mealCounterElem = document.querySelector('aside span');
 let mealOfTheDay = document.querySelector('#mealoftheday');
+let changeForm = document.querySelector('#popup .changeform');
 
 if (!localStorage.key(0)) {
     localStorage.setItem('meals', JSON.stringify(meals))
@@ -363,7 +364,7 @@ let showPopup = (e) => {
     popupElem.classList.remove('hidden');
 
     popupContent.innerHTML = `
-    <article>
+    <article data-id="${localStorageMeals[parseInt(id) - 1]['id']}">
         <h3>${localStorageMeals[parseInt(id) - 1]['title']}</h3>
         <figure>
             <img src="images/${localStorageMeals[parseInt(id) - 1]['img']}" alt="${localStorageMeals[parseInt(id) - 1]['title']}" title="${localStorageMeals[parseInt(id) - 1]['title']}" />
@@ -371,7 +372,7 @@ let showPopup = (e) => {
                 Meal by: <span>${localStorageMeals[parseInt(id) - 1]['cook']}</span>
             </figcaption>
         </figure>
-        <div class="info" data-id="${localStorageMeals[parseInt(id) - 1]['id']}">
+        <div class="info">
             <dl>
                 <dt>calories:</dt>
                 <dd>${localStorageMeals[parseInt(id) - 1]['calories']}</dd>
@@ -385,6 +386,7 @@ let showPopup = (e) => {
             <div class="info">
                 <p>€ ${localStorageMeals[parseInt(id) - 1]['price']}/pp</p>
                 <a href="#" class="order">Order</a>
+                <a href="#" class="change">Change</a>
             </div>
         </div>
     </article>
@@ -394,11 +396,29 @@ let showPopup = (e) => {
     orderElem.forEach(order => {
         order.addEventListener('click', addToCart);
     });
+
+    let changeElem = document.querySelector('.change');
+    changeElem.addEventListener('click', showChangeForm);
 };
 
 let hidePopup = (e) => {
     e.preventDefault();
+
+    if (changeForm.className !== 'changeform hidden') {
+        changeForm.classList.add('hidden')
+    }
+
+    popupContent.classList.remove('hidden');
+
     popupElem.classList.add('hidden');
+};
+
+let showChangeForm = (e) => {
+    popupContent.classList.add('hidden');
+
+    changeForm.classList.remove('hidden');
+
+    e.preventDefault();
 };
 
 let showCart = (e) => {
@@ -473,7 +493,7 @@ let addToCart = (e) => {
 
     let cartItemsTableBody = document.querySelector('#cart .items tbody');
     let cartItemsTableFoot = document.querySelector('#cart .items tfoot');
-    let mealId = e.currentTarget.parentElement.parentElement.getAttribute('data-id');
+    let mealId = e.currentTarget.closest('article').getAttribute('data-id');
     let mealTitle = localStorageMeals[parseInt(mealId) - 1]['title'];
     let mealPrice = localStorageMeals[parseInt(mealId) - 1]['price'];
 

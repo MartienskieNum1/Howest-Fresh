@@ -247,8 +247,7 @@ footer {
     font-weight: bold;
     color: #000; }
 
-section
-.order {
+.order, .change{
   background-color: #ff7cd8;
   color: #FFF;
   padding: 5px;
@@ -322,6 +321,10 @@ section .addedtocart {
     font-size: 2rem;
     font-weight: bold;
     color: #000; }
+#popup form {
+  max-height: 400px;
+  overflow: scroll;
+}
 
 #cart h2 {
   margin-bottom: 30px; }
