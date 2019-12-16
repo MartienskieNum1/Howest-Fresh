@@ -313,11 +313,6 @@ cartCounterElem.innerHTML = localStorage.getItem('cartCounter');
 
 let alreadyInsertedTable = false;
 
-if (localStorage.getItem('mealsInCart')) {
-    cartItems.innerHTML = localStorage.getItem('mealsInCart');
-    alreadyInsertedTable = true
-}
-
 let totalPrice = localStorage.getItem('totalPrice');
 if (totalPrice === null) {
     totalPrice = 0
@@ -326,6 +321,52 @@ if (totalPrice === null) {
 let amountRemoved = localStorage.getItem('amountRemoved');
 if (amountRemoved === null) {
     amountRemoved = 0
+}
+
+let cartItemsArray = localStorage.getItem('cartItemsArray');
+if (cartItemsArray === null) {
+    cartItemsArray = [];
+}
+
+if (localStorage.getItem('cartItemsArray')) {
+    cartItems.innerHTML = `
+                    <table>
+                <thead>
+                    <tr>
+                        <th>Meal</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+                <tfoot>
+                
+                </tfoot>
+            </table>
+        `;
+    alreadyInsertedTable = true;
+    let cartItemsTableBody = document.querySelector('#cart .items tbody');
+    let cartItemsTableFoot = document.querySelector('#cart .items tfoot');
+
+    cartItemsTableFoot.innerHTML = `
+        <tr>
+            <td></td>
+            <td>Total: €${totalPrice}</td>
+        </tr>
+        `;
+
+    for (let id of JSON.parse(localStorage.getItem('cartItemsArray'))) {
+        let mealTitle = localStorageMeals[parseInt(id) - amountRemoved - 1]['title'];
+        let mealPrice = localStorageMeals[parseInt(id) - amountRemoved - 1]['price'];
+
+        cartItemsTableBody.innerHTML += `
+        <tr>
+            <td>${mealTitle}</td>
+            <td>${mealPrice}</td>
+        </tr>
+        `;
+    }
 }
 
 let init = () => {
@@ -556,9 +597,9 @@ let addToCart = (e) => {
     e.preventDefault();
 
     let mealId = e.currentTarget.closest('article').getAttribute('data-id');
-    let mealTitle = localStorageMeals[parseInt(mealId) - 1]['title'];
-    let mealPrice = localStorageMeals[parseInt(mealId) - 1]['price'];
-    let mealQuantity = localStorageMeals[parseInt(mealId) - 1]['quantity'];
+    let mealTitle = localStorageMeals[parseInt(mealId) - amountRemoved - 1]['title'];
+    let mealPrice = localStorageMeals[parseInt(mealId) - amountRemoved - 1]['price'];
+    let mealQuantity = localStorageMeals[parseInt(mealId) - amountRemoved - 1]['quantity'];
 
     if (mealQuantity >= 1) {
         cartCounter++;
@@ -606,8 +647,8 @@ let addToCart = (e) => {
         </tr>
         `;
 
-        localStorage.setItem('mealsInCart', cartItems.innerHTML);
-
+        cartItemsArray.push(mealId);
+        localStorage.setItem('cartItemsArray', JSON.stringify(cartItemsArray));
     }
 };
 
@@ -641,12 +682,4 @@ let confirmOrder = (e) => {
     confirmationPersonsName.innerHTML = name;
     confirmationPrice.innerHTML = `€${totalPrice}`;
 };
-
-
-
-
-
-
-
-
 
