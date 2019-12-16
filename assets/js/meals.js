@@ -305,12 +305,6 @@ if (!localStorage.getItem('meals')) {
 }
 let localStorageMeals = JSON.parse(localStorage.getItem('meals'));
 
-let cartCounter = localStorage.getItem('cartCounter');
-if (cartCounter === null) {
-    cartCounter = 0
-}
-cartCounterElem.innerHTML = localStorage.getItem('cartCounter');
-
 let alreadyInsertedTable = false;
 
 let totalPrice = localStorage.getItem('totalPrice');
@@ -323,9 +317,14 @@ if (amountRemoved === null) {
     amountRemoved = 0
 }
 
-let cartItemsArray = localStorage.getItem('cartItemsArray');
+let cartItemsArray = JSON.parse(localStorage.getItem('cartItemsArray'));
 if (cartItemsArray === null) {
     cartItemsArray = [];
+}
+
+let cartCounter = cartItemsArray.length;
+if (cartCounter > 0) {
+    cartCounterElem.innerHTML = cartCounter;
 }
 
 if (localStorage.getItem('cartItemsArray')) {
@@ -356,9 +355,10 @@ if (localStorage.getItem('cartItemsArray')) {
         </tr>
         `;
 
-    for (let id of JSON.parse(localStorage.getItem('cartItemsArray'))) {
-        let mealTitle = localStorageMeals[parseInt(id) - amountRemoved - 1]['title'];
-        let mealPrice = localStorageMeals[parseInt(id) - amountRemoved - 1]['price'];
+    for (let idInd of JSON.parse(localStorage.getItem('cartItemsArray'))) {
+        console.log(idInd);
+        let mealTitle = localStorageMeals[parseInt(idInd) - amountRemoved - 1]['title'];
+        let mealPrice = localStorageMeals[parseInt(idInd) - amountRemoved - 1]['price'];
 
         cartItemsTableBody.innerHTML += `
         <tr>
@@ -438,7 +438,6 @@ let loadMeals = () => {
 
 let showPopup = (e) => {
     let id = e.target.closest('article').getAttribute('data-id');
-    console.log(id);
 
     popupElem.classList.remove('hidden');
 
@@ -557,13 +556,17 @@ let remove = (e) => {
             localStorageMeals.splice(i, 1);
         }
     }
-    console.log(localStorageMeals);
-
     localStorage.setItem('meals', JSON.stringify(localStorageMeals));
+
+    for (let i = 0; i < cartItemsArray.length; i++) {
+        if (parseInt(cartItemsArray[i]) === parseInt(mealId)) {
+            cartItemsArray.splice(i, 1)
+        }
+    }
+    localStorage.setItem('cartItemsArray', JSON.stringify(cartItemsArray));
+
     amountRemoved++;
     localStorage.setItem('amountRemoved', amountRemoved);
-
-
 
     location.reload();
 };
@@ -602,10 +605,6 @@ let addToCart = (e) => {
     let mealQuantity = localStorageMeals[parseInt(mealId) - amountRemoved - 1]['quantity'];
 
     if (mealQuantity >= 1) {
-        cartCounter++;
-        localStorage.setItem('cartCounter', cartCounter);
-        cartCounterElem.innerHTML = localStorage.getItem('cartCounter');
-
         if (alreadyInsertedTable === false) {
             cartItems.innerHTML = `
                     <table>
@@ -649,6 +648,9 @@ let addToCart = (e) => {
 
         cartItemsArray.push(mealId);
         localStorage.setItem('cartItemsArray', JSON.stringify(cartItemsArray));
+
+        cartCounter = cartItemsArray.length;
+        cartCounterElem.innerHTML = cartCounter;
     }
 };
 
