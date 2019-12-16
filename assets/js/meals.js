@@ -300,11 +300,33 @@ let typeElement = document.querySelectorAll('.changeform input[name="type"]');
 let cookELem = document.querySelector('.changeform input[name="cook"]');
 let availableELem = document.querySelector('.changeform input[name="available"]');
 
-
-if (!localStorage.key(0)) {
+if (!localStorage.getItem('meals')) {
     localStorage.setItem('meals', JSON.stringify(meals))
 }
 let localStorageMeals = JSON.parse(localStorage.getItem('meals'));
+
+let cartCounter = localStorage.getItem('cartCounter');
+if (cartCounter === null) {
+    cartCounter = 0
+}
+cartCounterElem.innerHTML = localStorage.getItem('cartCounter');
+
+let alreadyInsertedTable = false;
+
+if (localStorage.getItem('mealsInCart')) {
+    cartItems.innerHTML = localStorage.getItem('mealsInCart');
+    alreadyInsertedTable = true
+}
+
+let totalPrice = localStorage.getItem('totalPrice');
+if (totalPrice === null) {
+    totalPrice = 0
+}
+
+let amountRemoved = localStorage.getItem('amountRemoved');
+if (amountRemoved === null) {
+    amountRemoved = 0
+}
 
 let init = () => {
     console.log('page loaded!');
@@ -374,36 +396,38 @@ let loadMeals = () => {
 };
 
 let showPopup = (e) => {
-    let id = e.currentTarget.parentElement.parentElement.getAttribute('data-id');
+    let id = e.target.closest('article').getAttribute('data-id');
+    console.log(id);
 
     popupElem.classList.remove('hidden');
 
     popupContent.innerHTML = `
-    <article data-id="${localStorageMeals[parseInt(id) - 1]['id']}">
-        <h3>${localStorageMeals[parseInt(id) - 1]['title']}</h3>
+    <article data-id="${localStorageMeals[parseInt(id) - amountRemoved - 1]['id']}">
+        <h3>${localStorageMeals[parseInt(id) - amountRemoved - 1]['title']}</h3>
         <figure>
-            <img src="images/${localStorageMeals[parseInt(id) - 1]['img']}" alt="${localStorageMeals[parseInt(id) - 1]['title']}" title="${localStorageMeals[parseInt(id) - 1]['title']}" />
+            <img src="images/${localStorageMeals[parseInt(id) - amountRemoved - 1]['img']}" alt="${localStorageMeals[parseInt(id) - amountRemoved - 1]['title']}" title="${localStorageMeals[parseInt(id) - amountRemoved - 1]['title']}" />
             <figcaption>
-                Meal by: <span>${localStorageMeals[parseInt(id) - 1]['cook']}</span>
+                Meal by: <span>${localStorageMeals[parseInt(id) - amountRemoved - 1]['cook']}</span>
             </figcaption>
         </figure>
         <div class="info">
             <dl>
                 <dt>calories:</dt>
-                <dd>${localStorageMeals[parseInt(id) - 1]['calories']}</dd>
+                <dd>${localStorageMeals[parseInt(id) - amountRemoved - 1]['calories']}</dd>
                 <dt>servings:</dt>
-                <dd>${localStorageMeals[parseInt(id) - 1]['servings']}</dd>
+                <dd>${localStorageMeals[parseInt(id) - amountRemoved - 1]['servings']}</dd>
                 <dt>days to book in advance:</dt>
-                <dd>${localStorageMeals[parseInt(id) - 1]['book']}</dd>
+                <dd>${localStorageMeals[parseInt(id) - amountRemoved - 1]['book']}</dd>
                 <dt>type:</dt>
-                <dd>${localStorageMeals[parseInt(id) - 1]['type']}</dd>
+                <dd>${localStorageMeals[parseInt(id) - amountRemoved - 1]['type']}</dd>
                 <dt>Amount available:</dt>
-                <dd>${localStorageMeals[parseInt(id) - 1]['quantity']}</dd>
+                <dd>${localStorageMeals[parseInt(id) - amountRemoved - 1]['quantity']}</dd>
             </dl>
             <div class="info">
-                <p>€ ${localStorageMeals[parseInt(id) - 1]['price']}/pp</p>
+                <p>€ ${localStorageMeals[parseInt(id) - amountRemoved - 1]['price']}/pp</p>
                 <a href="#" class="order">Order</a>
                 <a href="#" class="change">Change</a>
+                <a href="#" class="remove">Remove</a>
             </div>
         </div>
     </article>
@@ -416,6 +440,9 @@ let showPopup = (e) => {
 
     let changeElem = document.querySelector('.change');
     changeElem.addEventListener('click', showChangeForm);
+
+    let removeElem = document.querySelector('.remove');
+    removeElem.addEventListener('click', remove);
 };
 
 let hidePopup = (e) => {
@@ -478,6 +505,28 @@ let showChangeForm = (e) => {
     });
 };
 
+let remove = (e) => {
+    e.preventDefault();
+
+    let mealId = e.target.closest('article').getAttribute('data-id');
+    console.log(mealId);
+
+    for (let i = 0; i < localStorageMeals.length; i++) {
+        if (parseInt(localStorageMeals[i]['id']) === parseInt(mealId)) {
+            localStorageMeals.splice(i, 1);
+        }
+    }
+    console.log(localStorageMeals);
+
+    localStorage.setItem('meals', JSON.stringify(localStorageMeals));
+    amountRemoved++;
+    localStorage.setItem('amountRemoved', amountRemoved);
+
+
+
+    location.reload();
+};
+
 let showCart = (e) => {
     e.preventDefault();
 
@@ -502,24 +551,6 @@ let hideCart = (e) => {
         confirmation.classList.add('hidden')
     }
 };
-
-let cartCounter = localStorage.getItem('cartCounter');
-if (cartCounter === null) {
-    cartCounter = 0
-}
-cartCounterElem.innerHTML = localStorage.getItem('cartCounter');
-
-let alreadyInsertedTable = false;
-
-if (localStorage.key(2)) {
-    cartItems.innerHTML = localStorage.getItem('mealsInCart');
-    alreadyInsertedTable = true
-}
-
-let totalPrice = localStorage.getItem('totalPrice');
-if (totalPrice === null) {
-    totalPrice = 0
-}
 
 let addToCart = (e) => {
     e.preventDefault();
