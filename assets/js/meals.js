@@ -307,6 +307,8 @@ let typeElement = document.querySelectorAll('.changeform input[name="type"]');
 let cookELem = document.querySelector('.changeform input[name="cook"]');
 let availableELem = document.querySelector('.changeform input[name="available"]');
 
+let finishedOrder = false;
+
 if (!localStorage.getItem('meals')) {
     localStorage.setItem('meals', JSON.stringify(meals))
 }
@@ -708,5 +710,19 @@ let confirmOrder = (e) => {
 
     confirmationPersonsName.innerHTML = name;
     confirmationPrice.innerHTML = `€${totalPrice}`;
+
+    localStorage.setItem('previousCart', localStorage.getItem('cartItemsArray'));
+    cartItemsArray = [];
+    localStorage.setItem('cartItemsArray', JSON.stringify(cartItemsArray));
+
+    localStorage.setItem('previousTotalPrice', localStorage.getItem('totalPrice'));
+    totalPrice = 0;
+    localStorage.setItem('totalPrice', totalPrice);
+
+    cartCounter = cartItemsArray.length;
+    cartCounterElem.innerHTML = '';
+    finishedOrder = true;
+
+    location.reload();
 };
 
