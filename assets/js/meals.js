@@ -267,15 +267,20 @@ const meals = [
     }
 ];
 
+let sortByElem = document.querySelector('#sortby');
+let searchElem = document.querySelector('input[name="search"]');
 
 let popupElem = document.querySelector('#popup');
 let popupCloseELem = document.querySelector('#popup .close');
 let popupContent = document.querySelector('#popup .contentwrapper');
+
 let mealContainer = document.querySelector('.flexcontainer');
+
 let cartElem = document.querySelector('.viewcart');
 let cartContainer = document.querySelector('#cart');
 let cartCLoseELem = document.querySelector('#cart .close');
 let cartCounterElem = document.querySelector('.viewcart span');
+let cartNoItems = document.querySelector('#noitems');
 let cartItems = document.querySelector('#cartoverview .items');
 let cartCheckout = document.querySelector('#cartoverview a');
 let cartOverview = document.querySelector('#cartoverview');
@@ -286,10 +291,12 @@ let confirmationPersonsName = document.querySelector('#confirmation .personname'
 let confirmationPrice = document.querySelector('#confirmation .price');
 let confirmationRadios = document.querySelectorAll('#personalinformation input[type="radio"]');
 let confirmationPaymentMethod = document.querySelector('#confirmation .paymentmethod');
-let mealCounterElem = document.querySelector('aside span');
-let mealOfTheDay = document.querySelector('#mealoftheday');
-let changeForm = document.querySelector('#popup .changeform');
 
+let mealCounterElem = document.querySelector('aside span');
+
+let mealOfTheDay = document.querySelector('#mealoftheday');
+
+let changeForm = document.querySelector('#popup .changeform');
 let submitElem = document.querySelector('.changeform input[type="submit"]');
 let titleElem = document.querySelector('.changeform input[name="title"]');
 let bookELem = document.querySelector('.changeform input[name="book"]');
@@ -376,6 +383,12 @@ let init = () => {
 
     loadMeals();
 
+    searchElem.addEventListener('keypress', filter);
+
+    for (let prop in meals[0]) {
+        sortByElem.innerHTML += `<option>${prop}</option>`;
+    }
+
     mealCounterElem.innerHTML = localStorageMeals.length;
 
     let mealElem = document.querySelectorAll('article img');
@@ -434,6 +447,10 @@ let loadMeals = () => {
         </article>
         `;
     })
+};
+
+let filter = () => {
+
 };
 
 let showPopup = (e) => {
@@ -577,7 +594,15 @@ let showCart = (e) => {
     cartContainer.classList.remove('hidden');
 
     if (cartCounter === 0) {
-        cartItems.innerHTML = 'No meals have been added to your card yet'
+        cartNoItems.classList.remove('hidden');
+        if (cartOverview.className !== 'hidden') {
+            cartOverview.classList.add('hidden');
+        }
+    } else {
+        cartOverview.classList.remove('hidden');
+        if (cartNoItems.className !== 'hidden') {
+            cartNoItems.classList.add('hidden');
+        }
     }
 };
 
