@@ -659,9 +659,16 @@ let addToCart = (e) => {
     let mealId = e.currentTarget.closest('article').getAttribute('data-id');
     let mealTitle = localStorageMeals[parseInt(mealId) - amountRemoved - 1]['title'];
     let mealPrice = localStorageMeals[parseInt(mealId) - amountRemoved - 1]['price'];
+
     let mealQuantity = localStorageMeals[parseInt(mealId) - amountRemoved - 1]['quantity'];
 
-    if (mealQuantity >= 1) {
+    console.log(mealQuantity);
+
+    if (mealQuantity > 0) {
+        meals[parseInt(mealId) - amountRemoved - 1]['quantity']--;
+        localStorage.setItem('meals', JSON.stringify(meals));
+        localStorageMeals = JSON.parse(localStorage.getItem('meals'));
+
         totalPrice = parseInt(totalPrice);
         totalPrice += parseInt(mealPrice);
         localStorage.setItem('totalPrice', totalPrice);
