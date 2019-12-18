@@ -247,7 +247,7 @@ footer {
     font-weight: bold;
     color: #000; }
 
-.order, .change, .remove{
+.order, .change, .remove, .yes, .no{
   background-color: #ff7cd8;
   color: #FFF;
   padding: 5px;

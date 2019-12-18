@@ -280,6 +280,7 @@ let cartElem = document.querySelector('.viewcart');
 let cartContainer = document.querySelector('#cart');
 let cartCLoseELem = document.querySelector('#cart .close');
 let cartCounterElem = document.querySelector('.viewcart span');
+let cartPrevious = document.querySelector('#previous');
 let cartNoItems = document.querySelector('#noitems');
 let cartItems = document.querySelector('#cartoverview .items');
 let cartCheckout = document.querySelector('#cartoverview a');
@@ -291,6 +292,9 @@ let confirmationPersonsName = document.querySelector('#confirmation .personname'
 let confirmationPrice = document.querySelector('#confirmation .price');
 let confirmationRadios = document.querySelectorAll('#personalinformation input[type="radio"]');
 let confirmationPaymentMethod = document.querySelector('#confirmation .paymentmethod');
+
+let cartItemsTableBody = document.querySelector('#cart .items tbody');
+let cartItemsTableFoot = document.querySelector('#cart .items tfoot');
 
 let mealCounterElem = document.querySelector('aside span');
 
@@ -307,14 +311,15 @@ let typeElement = document.querySelectorAll('.changeform input[name="type"]');
 let cookELem = document.querySelector('.changeform input[name="cook"]');
 let availableELem = document.querySelector('.changeform input[name="available"]');
 
-let finishedOrder = false;
-
 if (!localStorage.getItem('meals')) {
     localStorage.setItem('meals', JSON.stringify(meals))
 }
 let localStorageMeals = JSON.parse(localStorage.getItem('meals'));
 
-let alreadyInsertedTable = false;
+let finishedOrder = localStorage.getItem('finishedOrder');
+if (finishedOrder === null) {
+    finishedOrder = false
+}
 
 let totalPrice = localStorage.getItem('totalPrice');
 if (totalPrice === null) {
@@ -336,27 +341,7 @@ if (cartCounter > 0) {
     cartCounterElem.innerHTML = cartCounter;
 }
 
-if (localStorage.getItem('cartItemsArray')) {
-    cartItems.innerHTML = `
-                    <table>
-                <thead>
-                    <tr>
-                        <th>Meal</th>
-                        <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                </tbody>
-                <tfoot>
-                
-                </tfoot>
-            </table>
-        `;
-    alreadyInsertedTable = true;
-    let cartItemsTableBody = document.querySelector('#cart .items tbody');
-    let cartItemsTableFoot = document.querySelector('#cart .items tfoot');
-
+let buildCart = () => {
     cartItemsTableFoot.innerHTML = `
         <tr>
             <td></td>
@@ -365,7 +350,6 @@ if (localStorage.getItem('cartItemsArray')) {
         `;
 
     for (let idInd of JSON.parse(localStorage.getItem('cartItemsArray'))) {
-        console.log(idInd);
         let mealTitle = localStorageMeals[parseInt(idInd) - amountRemoved - 1]['title'];
         let mealPrice = localStorageMeals[parseInt(idInd) - amountRemoved - 1]['price'];
 
@@ -376,6 +360,10 @@ if (localStorage.getItem('cartItemsArray')) {
         </tr>
         `;
     }
+};
+
+if (localStorage.getItem('cartItemsArray')) {
+    buildCart();
 }
 
 let init = () => {
@@ -593,19 +581,61 @@ let remove = (e) => {
 let showCart = (e) => {
     e.preventDefault();
 
+    let cartEmptyOrNot = () => {
+        if (cartCounter === 0) {
+            cartNoItems.classList.remove('hidden');
+            if (cartOverview.className !== 'hidden') {
+                cartOverview.classList.add('hidden');
+            }
+        } else {
+            cartOverview.classList.remove('hidden');
+            if (cartNoItems.className !== 'hidden') {
+                cartNoItems.classList.add('hidden');
+            }
+        }
+    };
+
     cartContainer.classList.remove('hidden');
 
-    if (cartCounter === 0) {
-        cartNoItems.classList.remove('hidden');
+    if (JSON.parse(localStorage.getItem('finishedOrder'))) {
+        cartPrevious.classList.remove('hidden');
         if (cartOverview.className !== 'hidden') {
             cartOverview.classList.add('hidden');
         }
-    } else {
-        cartOverview.classList.remove('hidden');
         if (cartNoItems.className !== 'hidden') {
             cartNoItems.classList.add('hidden');
         }
+
+        document.querySelector('.yes').addEventListener('click', () => {
+            cartPrevious.classList.add('hidden');
+            finishedOrder = false;
+            localStorage.setItem('finishedOrder', finishedOrder);
+            console.log(JSON.parse(localStorage.getItem('previousCart')));
+            JSON.parse(localStorage.getItem('previousCart')).forEach(id => {
+                cartItemsArray.push(id)
+            });
+            console.log(cartItemsArray);
+            localStorage.setItem('cartItemsArray', JSON.stringify(cartItemsArray));
+            totalPrice += parseInt(localStorage.getItem('previousTotalPrice'));
+            localStorage.setItem('totalPrice', totalPrice);
+            cartItemsTableBody.innerHTML = '';
+            buildCart();
+            cartCounter = cartItemsArray.length;
+            cartCounterElem.innerHTML = cartCounter;
+            console.log(cartCounter);
+            cartEmptyOrNot();
+        });
+
+        document.querySelector('.no').addEventListener('click', () => {
+            cartPrevious.classList.add('hidden');
+            finishedOrder = false;
+            localStorage.setItem('finishedOrder', finishedOrder);
+            cartEmptyOrNot();
+        });
+    } else {
+        cartEmptyOrNot()
     }
+
 };
 
 let hideCart = (e) => {
@@ -632,29 +662,6 @@ let addToCart = (e) => {
     let mealQuantity = localStorageMeals[parseInt(mealId) - amountRemoved - 1]['quantity'];
 
     if (mealQuantity >= 1) {
-        if (alreadyInsertedTable === false) {
-            cartItems.innerHTML = `
-                    <table>
-                <thead>
-                    <tr>
-                        <th>Meal</th>
-                        <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                </tbody>
-                <tfoot>
-                
-                </tfoot>
-            </table>
-        `;
-            alreadyInsertedTable = true;
-        }
-
-        let cartItemsTableBody = document.querySelector('#cart .items tbody');
-        let cartItemsTableFoot = document.querySelector('#cart .items tfoot');
-
         totalPrice = parseInt(totalPrice);
         totalPrice += parseInt(mealPrice);
         localStorage.setItem('totalPrice', totalPrice);
@@ -715,14 +722,16 @@ let confirmOrder = (e) => {
     cartItemsArray = [];
     localStorage.setItem('cartItemsArray', JSON.stringify(cartItemsArray));
 
+    cartItemsTableBody.innerHTML = '';
+
     localStorage.setItem('previousTotalPrice', localStorage.getItem('totalPrice'));
     totalPrice = 0;
     localStorage.setItem('totalPrice', totalPrice);
 
     cartCounter = cartItemsArray.length;
     cartCounterElem.innerHTML = '';
-    finishedOrder = true;
 
-    location.reload();
+    finishedOrder = true;
+    localStorage.setItem('finishedOrder', finishedOrder);
 };
 
