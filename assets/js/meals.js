@@ -366,6 +366,20 @@ let buildCart = () => {
     }
 };
 
+let cartEmptyOrNot = () => {
+    if (cartCounter === 0) {
+        cartNoItems.classList.remove('hidden');
+        if (cartOverview.className !== 'hidden') {
+            cartOverview.classList.add('hidden');
+        }
+    } else {
+        cartOverview.classList.remove('hidden');
+        if (cartNoItems.className !== 'hidden') {
+            cartNoItems.classList.add('hidden');
+        }
+    }
+};
+
 if (localStorage.getItem('cartItemsArray')) {
     buildCart();
 }
@@ -595,20 +609,6 @@ let remove = (e) => {
 let showCart = (e) => {
     e.preventDefault();
 
-    let cartEmptyOrNot = () => {
-        if (cartCounter === 0) {
-            cartNoItems.classList.remove('hidden');
-            if (cartOverview.className !== 'hidden') {
-                cartOverview.classList.add('hidden');
-            }
-        } else {
-            cartOverview.classList.remove('hidden');
-            if (cartNoItems.className !== 'hidden') {
-                cartNoItems.classList.add('hidden');
-            }
-        }
-    };
-
     cartContainer.classList.remove('hidden');
 
     if (JSON.parse(localStorage.getItem('finishedOrder'))) {
@@ -661,7 +661,6 @@ let removeFromCart = (e) => {
 
     let count = e.target.getAttribute('data-count');
     let mealId = e.target.getAttribute('data-id');
-    let mealQuantity = localStorageMeals[parseInt(mealId) - amountRemoved - 1]['quantity'];
 
     cartItemsArray.splice(count, 1);
     localStorage.setItem('cartItemsArray', JSON.stringify(cartItemsArray));
@@ -669,8 +668,8 @@ let removeFromCart = (e) => {
     totalPrice -= parseInt(meals[mealId - amountRemoved - 1]['price']);
     localStorage.setItem('totalPrice', totalPrice);
 
-    meals[parseInt(mealId) - amountRemoved - 1]['quantity']++;
-    localStorage.setItem('meals', JSON.stringify(meals));
+    localStorageMeals[parseInt(mealId) - amountRemoved - 1]['quantity']++;
+    localStorage.setItem('meals', JSON.stringify(localStorageMeals));
     localStorageMeals = JSON.parse(localStorage.getItem('meals'));
 
     cartCounter = cartItemsArray.length;
@@ -679,6 +678,8 @@ let removeFromCart = (e) => {
     } else {
         cartCounterElem.innerHTML = cartCounter;
     }
+
+    cartEmptyOrNot();
 
     buildCart();
     let cartRemove = document.querySelectorAll('#removemeal');
@@ -712,8 +713,8 @@ let addToCart = (e) => {
     let mealQuantity = localStorageMeals[parseInt(mealId) - amountRemoved - 1]['quantity'];
 
     if (mealQuantity > 0) {
-        meals[parseInt(mealId) - amountRemoved - 1]['quantity']--;
-        localStorage.setItem('meals', JSON.stringify(meals));
+        localStorageMeals[parseInt(mealId) - amountRemoved - 1]['quantity']--;
+        localStorage.setItem('meals', JSON.stringify(localStorageMeals));
         localStorageMeals = JSON.parse(localStorage.getItem('meals'));
 
         totalPrice = parseInt(totalPrice);
@@ -735,11 +736,18 @@ let addToCart = (e) => {
         </tr>
         `;
 
+        let cartRemove = document.querySelectorAll('#removemeal');
+        cartRemove.forEach(item => {
+            item.addEventListener('click', removeFromCart)
+        });
+
         cartItemsArray.push(mealId);
         localStorage.setItem('cartItemsArray', JSON.stringify(cartItemsArray));
 
         cartCounter = cartItemsArray.length;
         cartCounterElem.innerHTML = cartCounter;
+
+        cartEmptyOrNot();
     }
 };
 
