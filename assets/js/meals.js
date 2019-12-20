@@ -377,7 +377,7 @@ let init = () => {
 
     loadMeals();
 
-    searchElem.addEventListener('keypress', filter);
+    searchElem.addEventListener('keyup', search);
 
     for (let prop in meals[0]) {
         sortByElem.innerHTML += `<option>${prop}</option>`;
@@ -443,8 +443,18 @@ let loadMeals = () => {
     })
 };
 
-let filter = () => {
+let search = () => {
+    let inputValue = searchElem.value.toLowerCase();
 
+    document.querySelectorAll('article h3').forEach(title => {
+        if (title.innerHTML.toLowerCase().indexOf(inputValue) != -1) {
+            if (title.closest('article').className === 'hidden') {
+                title.closest('article').classList.remove('hidden')
+            }
+        } else {
+            title.closest('article').classList.add('hidden')
+        }
+    });
 };
 
 let showPopup = (e) => {
