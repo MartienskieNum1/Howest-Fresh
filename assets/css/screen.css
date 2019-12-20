@@ -22,6 +22,10 @@ h3, h4 {
 a {
   color: #b4df5b; }
 
+a:hover {
+  cursor: pointer;
+}
+
 header a {
   text-decoration: none; }
 

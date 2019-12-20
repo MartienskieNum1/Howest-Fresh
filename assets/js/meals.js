@@ -282,7 +282,6 @@ let cartCLoseELem = document.querySelector('#cart .close');
 let cartCounterElem = document.querySelector('.viewcart span');
 let cartPrevious = document.querySelector('#previous');
 let cartNoItems = document.querySelector('#noitems');
-let cartItems = document.querySelector('#cartoverview .items');
 let cartCheckout = document.querySelector('#cartoverview a');
 let cartOverview = document.querySelector('#cartoverview');
 let personalInformation = document.querySelector('#personalinformation');
@@ -342,6 +341,7 @@ if (cartCounter > 0) {
 }
 
 let buildCart = () => {
+    cartItemsTableBody.innerHTML = '';
     cartItemsTableFoot.innerHTML = `
         <tr>
             <td></td>
@@ -349,6 +349,7 @@ let buildCart = () => {
         </tr>
         `;
 
+    let count = 0;
     for (let idInd of JSON.parse(localStorage.getItem('cartItemsArray'))) {
         let mealTitle = localStorageMeals[parseInt(idInd) - amountRemoved - 1]['title'];
         let mealPrice = localStorageMeals[parseInt(idInd) - amountRemoved - 1]['price'];
@@ -357,8 +358,11 @@ let buildCart = () => {
         <tr>
             <td>${mealTitle}</td>
             <td>${mealPrice}</td>
+            <td><a id="removemeal" data-count="${count}" data-id="${idInd}">X</a></td>
         </tr>
         `;
+
+        count++;
     }
 };
 
@@ -618,7 +622,6 @@ let showCart = (e) => {
             localStorage.setItem('cartItemsArray', JSON.stringify(cartItemsArray));
             totalPrice += parseInt(localStorage.getItem('previousTotalPrice'));
             localStorage.setItem('totalPrice', totalPrice);
-            cartItemsTableBody.innerHTML = '';
             buildCart();
             cartCounter = cartItemsArray.length;
             cartCounterElem.innerHTML = cartCounter;
@@ -636,6 +639,42 @@ let showCart = (e) => {
         cartEmptyOrNot()
     }
 
+    let cartRemove = document.querySelectorAll('#removemeal');
+    cartRemove.forEach(item => {
+        item.addEventListener('click', removeFromCart)
+    });
+
+};
+
+let removeFromCart = (e) => {
+    e.preventDefault();
+
+    let count = e.target.getAttribute('data-count');
+    let mealId = e.target.getAttribute('data-id');
+    let mealQuantity = localStorageMeals[parseInt(mealId) - amountRemoved - 1]['quantity'];
+
+    cartItemsArray.splice(count, 1);
+    localStorage.setItem('cartItemsArray', JSON.stringify(cartItemsArray));
+
+    totalPrice -= parseInt(meals[mealId - amountRemoved - 1]['price']);
+    localStorage.setItem('totalPrice', totalPrice);
+
+    meals[parseInt(mealId) - amountRemoved - 1]['quantity']++;
+    localStorage.setItem('meals', JSON.stringify(meals));
+    localStorageMeals = JSON.parse(localStorage.getItem('meals'));
+
+    cartCounter = cartItemsArray.length;
+    if (cartCounter === 0) {
+        cartCounterElem.innerHTML = '';
+    } else {
+        cartCounterElem.innerHTML = cartCounter;
+    }
+
+    buildCart();
+    let cartRemove = document.querySelectorAll('#removemeal');
+    cartRemove.forEach(item => {
+        item.addEventListener('click', removeFromCart)
+    });
 };
 
 let hideCart = (e) => {
@@ -662,8 +701,6 @@ let addToCart = (e) => {
 
     let mealQuantity = localStorageMeals[parseInt(mealId) - amountRemoved - 1]['quantity'];
 
-    console.log(mealQuantity);
-
     if (mealQuantity > 0) {
         meals[parseInt(mealId) - amountRemoved - 1]['quantity']--;
         localStorage.setItem('meals', JSON.stringify(meals));
@@ -677,6 +714,7 @@ let addToCart = (e) => {
         <tr>
             <td>${mealTitle}</td>
             <td>${mealPrice}</td>
+            <td><a id="removemeal" data-count="${cartItemsArray.length}" data-id="${mealId}">X</a></td>
         </tr>
         `;
 
