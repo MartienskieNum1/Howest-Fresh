@@ -327,9 +327,11 @@ section .addedtocart {
     color: #000; }
 #popup form {
   max-height: 400px;
-  overflow: scroll;
-}
+  overflow: scroll; }
 
+#cart .items {
+  max-height: 400px;
+  overflow: scroll; }
 #cart h2 {
   margin-bottom: 30px; }
   #cart h2 span {
