@@ -293,6 +293,7 @@ let confirmationPrice = document.querySelector('#confirmation .price');
 let confirmationRadios = document.querySelectorAll('#personalinformation input[type="radio"]');
 let confirmationPaymentMethod = document.querySelector('#confirmation .paymentmethod');
 
+let cartItems = document.querySelector('#cart .items');
 let cartItemsTableBody = document.querySelector('#cart .items tbody');
 let cartItemsTableFoot = document.querySelector('#cart .items tfoot');
 
@@ -366,7 +367,7 @@ let buildCart = () => {
         <tr>
             <td>${mealTitle}</td>
             <td>${mealPrice}</td>
-            <td><a id="removemeal" data-count="${count}" data-id="${idInd}">X</a></td>
+            <td><a class="removemeal" data-count="${count}" data-id="${idInd}">X</a></td>
         </tr>
         `;
 
@@ -409,9 +410,14 @@ let init = () => {
 
     mealCounterElem.innerHTML = localStorageMeals.length;
 
-    let mealElem = document.querySelectorAll('article img');
-    mealElem.forEach(meal => {
-        meal.addEventListener('click', showPopup);
+    mealContainer.addEventListener('click', (e) => {
+        let target = e.target;
+
+        if (target.tagName === 'IMG') {
+            showPopup(e)
+        } else if (target.tagName === 'A') {
+            addToCart(e)
+        }
     });
 
     popupCloseELem.addEventListener('click', hidePopup);
@@ -419,11 +425,6 @@ let init = () => {
     cartElem.addEventListener('click', showCart);
 
     cartCLoseELem.addEventListener('click', hideCart);
-
-    let orderElem = document.querySelectorAll('.info .order');
-    orderElem.forEach(order => {
-        order.addEventListener('click', addToCart);
-    });
 
     cartCheckout.addEventListener('click', showCheckout);
 
@@ -496,8 +497,6 @@ let sort = () => {
         array.sort((a, b) => (a.value < b.value) ? 1 : -1);
     }
 
-    console.log(array);
-
     mealContainer.innerHTML = '';
     array.forEach(meal => {
         let place = indexFinder(meal['id']);
@@ -516,12 +515,6 @@ let sort = () => {
             </div>
         </article>
         `;
-    });
-
-    cartElem.addEventListener('click', showCart);
-    let mealElem = document.querySelectorAll('article img');
-    mealElem.forEach(meal => {
-        meal.addEventListener('click', showPopup);
     });
 };
 
@@ -564,16 +557,17 @@ let showPopup = (e) => {
     </article>
     `;
 
-    let orderElem = document.querySelectorAll('.order');
-    orderElem.forEach(order => {
-        order.addEventListener('click', addToCart);
+    popupElem.addEventListener('click', (e) => {
+        let target = e.target;
+
+        if (target.className === 'order') {
+            addToCart(e)
+        } else if (target.className === 'change') {
+            showChangeForm(e)
+        } else if (target.className === 'remove') {
+            remove(e)
+        }
     });
-
-    let changeElem = document.querySelector('.change');
-    changeElem.addEventListener('click', showChangeForm);
-
-    let removeElem = document.querySelector('.remove');
-    removeElem.addEventListener('click', remove);
 };
 
 let hidePopup = (e) => {
@@ -618,7 +612,7 @@ let showChangeForm = (e) => {
             }
         });
 
-        localStorageMeals[parseInt(mealId) - 1] =
+        localStorageMeals[place] =
             {id: parseInt(mealId),
             title: titleElem.value,
             img: 'dummy.jpg',
@@ -708,9 +702,12 @@ let showCart = (e) => {
         cartEmptyOrNot()
     }
 
-    let cartRemove = document.querySelectorAll('#removemeal');
-    cartRemove.forEach(item => {
-        item.addEventListener('click', removeFromCart)
+    cartItems.addEventListener('click', (e) => {
+        let target = e.target;
+
+        if (target.className === 'removemeal') {
+            removeFromCart(e)
+        }
     });
 
 };
@@ -742,10 +739,6 @@ let removeFromCart = (e) => {
     cartEmptyOrNot();
 
     buildCart();
-    let cartRemove = document.querySelectorAll('#removemeal');
-    cartRemove.forEach(item => {
-        item.addEventListener('click', removeFromCart)
-    });
 };
 
 let hideCart = (e) => {
@@ -766,7 +759,7 @@ let hideCart = (e) => {
 let addToCart = (e) => {
     e.preventDefault();
 
-    let mealId = e.currentTarget.closest('article').getAttribute('data-id');
+    let mealId = e.target.closest('article').getAttribute('data-id');
     let place = indexFinder(mealId);
     let mealTitle = localStorageMeals[place]['title'];
     let mealPrice = localStorageMeals[place]['price'];
@@ -786,7 +779,7 @@ let addToCart = (e) => {
         <tr>
             <td>${mealTitle}</td>
             <td>${mealPrice}</td>
-            <td><a id="removemeal" data-count="${cartItemsArray.length}" data-id="${mealId}">X</a></td>
+            <td><a class="removemeal" data-count="${cartItemsArray.length}" data-id="${mealId}">X</a></td>
         </tr>
         `;
 
@@ -796,11 +789,6 @@ let addToCart = (e) => {
             <td>Total: €${totalPrice}</td>
         </tr>
         `;
-
-        let cartRemove = document.querySelectorAll('#removemeal');
-        cartRemove.forEach(item => {
-            item.addEventListener('click', removeFromCart)
-        });
 
         cartItemsArray.push(mealId);
         localStorage.setItem('cartItemsArray', JSON.stringify(cartItemsArray));
