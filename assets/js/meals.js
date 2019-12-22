@@ -269,6 +269,7 @@ const meals = [
 
 let sortByElem = document.querySelector('#sortby');
 let searchElem = document.querySelector('input[name="search"]');
+let directionELem = document.querySelector('#direction');
 
 let popupElem = document.querySelector('#popup');
 let popupCloseELem = document.querySelector('#popup .close');
@@ -398,11 +399,13 @@ let init = () => {
 
     loadMeals();
 
-    searchElem.addEventListener('keyup', search);
-
     for (let prop in meals[0]) {
-        sortByElem.innerHTML += `<option>${prop}</option>`;
+        sortByElem.innerHTML += `<option value="${prop}">${prop}</option>`;
     }
+
+    searchElem.addEventListener('keyup', search);
+    sortByElem.addEventListener('click', sort);
+    directionELem.addEventListener('click', sort);
 
     mealCounterElem.innerHTML = localStorageMeals.length;
 
@@ -475,6 +478,50 @@ let search = () => {
         } else {
             title.closest('article').classList.add('hidden')
         }
+    });
+};
+
+let sort = () => {
+    let sortValue = sortByElem.value;
+    let directionValue = directionELem.value;
+    let array = [];
+
+    localStorageMeals.forEach(meal => {
+        array.push({value: meal[`${sortValue}`], id: meal['id']});
+    });
+
+    if (directionValue === 'asc') {
+        array.sort((a, b) => (a.value > b.value) ? 1 : -1);
+    } else if (directionValue === 'desc') {
+        array.sort((a, b) => (a.value < b.value) ? 1 : -1);
+    }
+
+    console.log(array);
+
+    mealContainer.innerHTML = '';
+    array.forEach(meal => {
+        let place = indexFinder(meal['id']);
+        mealContainer.innerHTML += `
+        <article data-id="${meal['id']}">
+            <h3>${localStorageMeals[place]['title']}</h3>
+            <figure>
+                <img src="images/${localStorageMeals[place]['img']}" alt="${localStorageMeals[place]['title']}" title="${localStorageMeals[place]['title']}">
+                <figcaption>
+                    Meal by: <span>${localStorageMeals[place]['cook']}</span>
+                </figcaption>
+            </figure>
+            <div class="info">
+                <p>€ <span>${localStorageMeals[place]['price']}</span>/pp</p>
+                <a href="#" class="order">Order</a>
+            </div>
+        </article>
+        `;
+    });
+
+    cartElem.addEventListener('click', showCart);
+    let mealElem = document.querySelectorAll('article img');
+    mealElem.forEach(meal => {
+        meal.addEventListener('click', showPopup);
     });
 };
 
